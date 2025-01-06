@@ -5,7 +5,9 @@
   :version "0.0.1"
   :depends-on ("lem" "cl-treesitter" "cffi")
   :serial t
-  :components ((:module "src"
+  :components (
+               ;(:file "test")
+               (:module "src"
                :serial t
                :components ((:file "core")
                             (:file "buffer")
@@ -13,4 +15,5 @@
                             (:file "utils")
                             (:file "lem-treesitter")
                             (:file "printer")
+                            (:file "playground")
                             ))))

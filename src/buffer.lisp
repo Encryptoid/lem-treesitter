@@ -1,7 +1,10 @@
 (defpackage :lem-treesitter/buffer
   (:use :cl)
   (:local-nicknames (:ts :treesitter))
-  (:export :*ts-buffer-info*))
+ (:export :*ts-buffer-info*
+           :ts-buffer-info
+           :buffer-source
+           :buffer-info))
 (in-package :lem-treesitter/buffer)
 
 (defclass ts-buffer-info ()
@@ -18,33 +21,30 @@
 ;; Only support a singular buffer for now to play with
 (defvar *ts-buffer-info* nil)
 
-(defun load-ts-buffer (buffer)
-  "Load the BUFFER into a ts-buffer-info structure for querying"
-  (when *ts-buffer-info*
-    (when (slot-boundp *ts-buffer-info* 'cursor)
-      (ts::ts-tree-cursor-delete (ts::pointer (buffer-cursor *ts-buffer-info*))))
-    (when (slot-boundp *ts-buffer-info* 'tree)
-      (ts::ts-tree-delete (ts::pointer (buffer-tree *ts-buffer-info*)))))
-  (let* ((file-path (lem/buffer/internal::buffer-%filename buffer))
-         (contents (uiop:read-file-string file-path))
-         (parser (ts:make-parser :language lem-treesitter/core:*commonlisp*))
-         (tree (ts:parser-parse-string parser contents))
-         (info (make-instance 'ts-buffer-info)))
+;(defun ts-load-buffer (buffer lang)
+;  (let* ((text (lem:buffer-text buffer))
+;         (tree (ts:parser-parse-string (lem-treesitter/core::load-ts-parser lang) text)))
+;    (setf (lem:buffer-value :ts-tree tree) tree)))
 
-    (setf (buffer-parser info) parser
-          (buffer-source info) contents
-          (buffer-tree info) tree
-          (buffer-cursor info) (ts:make-cursor (ts:tree-root-node tree))
-          (buffer-root-node info) (ts:tree-root-node tree)
-          (buffer-last-parse-time info) (get-universal-time)
-          (buffer-last-position info) 0
-          (buffer-last-node info) (ts:tree-root-node tree))
+(defun ts-parse-text (text)
+  (lem-treesitter/core::ensure-treesitter :c_sharp)
+  (let ((parser (lem-treesitter/core::ensure-parser :c_sharp)))
+    (ts:parser-parse-string parser text)))
 
-    ;; Store in global var
-    (setf *ts-buffer-info* info)
-    (lem:message "Loaded buffer ~A (~A bytes)"
-                 (file-namestring file-path)
-                 (length contents))))
+(defun ts-parse-text (text)
+  (lem-treesitter/core::ensure-treesitter :commonlisp)
+  (let ((parser (lem-treesitter/core::ensure-parser :commonlisp)))
+    (ts:parser-parse-string parser text)))
 
-(lem:define-command ts-load-buffer () ()
-  (load-ts-buffer (lem:current-buffer)))
+(defun ts-parse-text (text)
+  (lem-treesitter/core::ensure-treesitter :python)
+  (let ((parser (lem-treesitter/core::ensure-parser :python)))
+    (ts:parser-parse-string parser text)))
+
+(defun ts-load-buffer (buffer)
+  (let* ((text (lem:buffer-text (lem:current-buffer)))
+         (tree (ts-parse-text text)))
+    (setf (lem:buffer-value buffer :ts-tree) tree)))
+
+(lem:define-command ts-init-buffer () ()
+  (ts-load-buffer (lem:current-buffer)))
