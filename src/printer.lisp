@@ -2,6 +2,13 @@
 
 ;; Ai generated, feel free to edit, works for now
 
+(defun logm (string)
+  (with-open-file (stream "~/temp/ts.log"
+                          :direction :output
+                          :if-exists :append
+                          :if-does-not-exist :create)
+    (write-line string stream)))
+
 (defun print-nodes (nodes &optional source)
   (format t "~%NODES PARSED:: ~a" (length nodes))
   (dolist (node nodes)
