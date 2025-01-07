@@ -9,7 +9,8 @@
 
 ;(format t "~a" lem/buffer/file:*find-file-hook*)
 (defun enable ()
-  (lem:add-hook lem/buffer/file:*find-file-hook* 'init-treesitter))
+  (lem:add-hook lem/buffer/file:*find-file-hook* 'init-treesitter)
+  (lem:message "Treesitter Enabled!"))
 
 ;; TODO worth using hashmap?
 (defparameter *supported-langs*
@@ -22,7 +23,8 @@
     (lem-treesitter/buffer:store-buffer-info buffer lang)
   (lem-treesitter/ext/highlight:init-highlighting buffer)))
 
-(defun disable ())
+(defun disable ()
+  (lem:message "Treesitter Disabled"))
 
 (lem:define-command ts-hl-buffer () ()
   (init-treesitter (lem:current-buffer)))

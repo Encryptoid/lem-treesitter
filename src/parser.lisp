@@ -27,10 +27,3 @@
 
 (defun walk-node-with-cursor (root-node buffer)
   (walk-cursor (ts:make-cursor root-node) buffer))
-
-(defun walk-node-no-cursor (node buffer)
-  (let ((children (ts:node-children node)))
-    (if (not children)
-        (put-node-attribute node (funcall *get-attr* node) buffer)
-        (dolist (child children)
-          (walk-node-no-cursor child buffer)))))

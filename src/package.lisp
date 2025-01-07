@@ -5,7 +5,8 @@
 
 (defpackage :lem-treesitter/buffer
   (:use :cl)
-  (:local-nicknames (:ts :treesitter))
+  (:local-nicknames (:ts :treesitter)
+                    (:tsbind :treesitter/bindings))
   (:export :*ts-buffer-info*
            :ts-buffer-info
            :buffer-source
