@@ -5,10 +5,14 @@
   (:export :*commonlisp*))
 (in-package :lem-treesitter/python)
 
+;; For now call this, need to introduce generic
 (lem:define-command ts-init-py () ()
   (setq lem-treesitter/parser::*get-attr* #'get-py-attribute))
 
 (defun get-py-attribute (node)
+  (get-base-py-attribute node))
+
+(defun get-base-py-attribute (node)
   (alexandria:switch ((ts:node-type node) :test #'equal)
     ;; Keywords
     ("def" 'lem:syntax-keyword-attribute)
@@ -26,7 +30,7 @@
 
     (")" 'lem:syntax-constant-attribute)
     (")" 'lem:syntax-constant-attribute)
-    ("decorator > identifier" lem/buffer/internal:syntax-keyword-attribute)
+    ("decorator > identifier" lem:syntax-keyword-attribute)
 
     ("integer" 'lem:syntax-constant-attribute)
     ("float" 'lem:syntax-constant-attribute)
@@ -39,12 +43,12 @@
 
     ("comment" 'lem:syntax-comment-attribute)
 
-    ("binary_operator" 'syntax-builtin-attribute)
-    ("unary_operator" 'syntax-builtin-attribute)
+    ("binary_operator" 'lem:syntax-builtin-attribute)
+    ("unary_operator" 'lem:syntax-builtin-attribute)
 
-    ("decorator" 'syntax-keyword-attribute)
+    ("decorator" 'lem:syntax-keyword-attribute)
 
-    ("type" 'syntax-type-attribute)
+    ("type" 'lem:syntax-type-attribute)
 
-    (t (if (some #'alpha-char-p (ts:node-type node)) 'lem:syntax-keyword-attribute 'lem:syntax-constant-attribute))
+    ;; (t (if (some #'alpha-char-p (ts:node-type node)) 'syntax-keyword-attribute 'lem:syntax-constant-attribute))
     ))

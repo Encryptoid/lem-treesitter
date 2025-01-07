@@ -1,14 +1,14 @@
 # Example with all common syntax elementsaa
-from typing import List, Dicta
+from typing import List, Dict
 from abc import abstractmethod
-5
+
 CONSTANT = True
 PI = 3.14159
 
 @property  # Decaoarator
 def get_value(self) -> float:
     return self.value
-aa
+
 class Calculator:
     def __init__(self, initial: float = 0.0):
         self.value = initial
@@ -16,8 +16,8 @@ class Calculator:
         self._private = None  # Private variable
 
     def add(self, x: float) -> float:
-        try:a
-  a          self.value = self.value + xabcabcss
+        try:
+            self.value = self.value + xabcabcss
             # Binary operators
             bits = (x & 0xFF) | (0x0F ^ 0x03)  # AND, OR, XOR
             shifted = bits << 2  # Left shift
@@ -37,9 +37,6 @@ points = {"x": 1, "y": 2}  # Dict
 coords = {1, 2, 3}  # Set
 squares = [x**2 for x in range(5)]  # List comprehension
 
-socks = 555
-socks = sa is a long aaastring"aaaaaaj"aa
-
 # Control flow and operators"
 calc = Calculator(10.0)
 for num in numbers:
@@ -49,4 +46,4 @@ for num in numbers:
         result = None
     else:
         result = calc.multiply(num)
-    print(f"Raaesult: {result}")
+    print(f"Result: {result}")

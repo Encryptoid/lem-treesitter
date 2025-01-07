@@ -1,7 +1,3 @@
-(defpackage :lem-treesitter/query
-  (:use :cl)
-  (:local-nicknames (:ts :treesitter))
-  (:export :*commonlisp*))
 (in-package :lem-treesitter/query)
 
 ;; File for all the queries

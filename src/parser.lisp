@@ -1,7 +1,3 @@
-(defpackage :lem-treesitter/parser
-  (:use :cl)
-  (:local-nicknames (:ts :treesitter))
-  (:export :*commonlisp*))
 (in-package :lem-treesitter/parser)
 
 ;; TODO: Get correct default
@@ -22,7 +18,7 @@
   (let* ((node (ts:cursor-node cursor)))
     (unless (ts:cursor-goto-first-child cursor)
       (put-node-attribute node (funcall *get-attr* node) buffer)
-      (lem-treesitter::print-node node)
+      ;(lem-treesitter::print-node node)
       (return-from walk-cursor))
     (loop do (walk-cursor cursor buffer)
              (unless (ts:cursor-goto-next-sibling cursor)

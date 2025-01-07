@@ -1,4 +1,4 @@
-(in-package :lem-treesitter)
+(in-package :lem-treesitter/core)
 
 ;; Ai generated, feel free to edit, works for now
 
@@ -17,17 +17,17 @@
 (defun print-node (node &optional source)
   "Pretty print a treesitter node. If source is provided, shows both the
    tree structure and the actual text content."
-  (format t "~%Node Type: ~a" (node-type node))
-  (format t "~%Tree structure: ~a" (node-string node))
+  (format t "~%Node Type: ~a" (ts:node-type node))
+  (format t "~%Tree structure: ~a" (ts:node-string node))
   (when source
-    (format t "~%Text content:~%~a" (node-text node source)))
+    (format t "~%Text content:~%~a" (ts:node-text node source)))
   (format t "~%Start byte: ~a, End byte: ~a"
-          (node-start-byte node)
-          (node-end-byte node))
+          (ts:node-start-byte node)
+          (ts:node-end-byte node))
   (format t "~%Start point: ~a, End point: ~a"
-          (node-start-point node)
-          (node-end-point node))
-  (format t "~%Named?: ~a" (node-named-p node))
-  (format t "~%Children count: ~a" (node-child-count node))
+          (ts:node-start-point node)
+          (ts:node-end-point node))
+  (format t "~%Named?: ~a" (ts:node-named-p node))
+  (format t "~%Children count: ~a" (ts:node-child-count node))
   (format t "~%---~%")
   (values))

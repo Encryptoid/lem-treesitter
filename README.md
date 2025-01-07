@@ -1,8 +1,11 @@
 # lem-treesitter
-NOTES: Very rough, just getting it working personally.
+NOTES: Very rough, just getting it working personally. The notes are not organised either.
 
 
 The goal is to not just create a walker for the syntax tree, but to parse each visited buffer to a TS Tree, and then expose querying to other packages. One of the packages will be syntax highlighting.
+
+The existing modes(python-mode, etc.) should still be activate to use their other functionality. `treesitter-mode` will try map the major mode to one of it's parsers.
+If the mapping succeed, it will call the init for `treesitter/langs/python`. It is in here that if we have syntax highlighting for a mode, we will turn off the existing and switch to treesitters highlighting extension.
 
 # Use Cases
 
@@ -46,9 +49,9 @@ We can either update immeditely or store the changes and send them to TS with `l
 
 
 # Differences from lem-treesitter-mode
-This is much more of a specific mode for syntax highlighting. Each syntax scan it will parse the buffer. My package wil instead parse the buffer once on load, and send changes to TS. We can choose to update the syntax here.
-Good to still do the whole buffer, but it will only be on edit rather than a timer. The other option is to use a tight idle time, if we need to handle larger scale edits to a file.
-
+https://github.com/somniamble/lem-treesitter-mode
+This is much more of a specific mode for syntax highlighting. It hooks into the existing syntax system so each syntax scan it will parse the buffer. My package will instead parse the buffer once on load, and send changes to TS. We can choose to update the syntax here.
+It was great to see their work though, so thank you to them.
 
 # High Level Highlight Example
 

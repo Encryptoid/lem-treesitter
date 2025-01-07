@@ -5,16 +5,20 @@
   :version "0.0.1"
   :depends-on ("lem" "cl-treesitter" "cffi")
   :serial t
-  :components ((:module "src"
+  :components (
+               (:module "src"
                 :serial t
-                :components ((:file "core")
+                :components ((:file "package")
+                             (:file "core")
+                             (:file "printer")
                              (:file "buffer")
                              (:file "query")
-                             (:file "utils")
-                             (:file "lem-treesitter")
-                             (:file "printer")
                              (:file "parser")
+                             (:file "ext/highlight")
+                             (:file "lem-treesitter")
                              ))
+
                (:module "langs"
                 :serial t
-                :components ((:file "python")))))
+                :components ((:file "python")))
+               ))

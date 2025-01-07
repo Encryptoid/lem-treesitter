@@ -1,7 +1,3 @@
-(defpackage :lem-treesitter/core
-  (:use :cl)
-  (:local-nicknames (:ts :treesitter))
-  (:export :*commonlisp*))
 (in-package :lem-treesitter/core)
 
 (defun join-directory (base-directory-pathname &rest sub-directory-path)
@@ -9,8 +5,7 @@
                                     sub-directory-path)))
 
 ;; TODO: Is there a better way to get this dir
-(defvar *lem-cache-dir* (uiop:parse-native-namestring (uiop:native-namestring "~/.local/share/lem") :ensure-directory t))
-(defvar *lem-treesitter-bin* (join-directory *lem-cache-dir* "treesitter" "bin"))
+(defvar *lem-treesitter-bin* (uiop:parse-native-namestring (uiop:native-namestring "~/.local/share/lem/treesitter/bin") :ensure-directory t))
 
 (defvar *treesitters* (make-hash-table :test #'equal))
 (defvar *parsers* (make-hash-table :test #'equal))
@@ -31,15 +26,42 @@
   (let ((lang-str (string-downcase (symbol-name lang))))
     `(format nil "~A" ,lang-str)))
 
+;(defmacro ensure-treesitter (&key lang)
+;  (let ((lang-str (string-downcase (symbol-name lang))))
+;    `(progn
+;       (treesitter:include-language ,lang-str :search-path *lem-treesitter-bin*)
+;       (setf (gethash ,lang *treesitters*) (treesitter:make-language ,lang-str)))))
 
-(defmacro ensure-treesitter (lang)
-  (let ((lang-str (string-downcase (symbol-name lang))))
-    `(progn
-       (treesitter:include-language ,lang-str :search-path *lem-treesitter-bin*)
-       (setf (gethash ,lang *treesitters*) (treesitter:make-language ,lang-str)))))
+;(defun ensure-treesitter (lang)
+;  (let ((lang-str (string-downcase (symbol-name lang))))
+;    (treesitter:include-language lang-str :search-path *lem-treesitter-bin*)
+;    (setf (gethash lang *treesitters*) (treesitter:make-language lang-str))))
 
-(defun ensure-parser (language)
-  (unless (gethash language *parsers*)
-    (setf (gethash language *parsers*)
-          (treesitter:make-parser :language (gethash language *treesitters*))))
-  (gethash language *parsers*))
+(defun ensure-treesitter (lang)
+  (let ((lang-str (string-downcase lang)))
+    (lem:message "Loading language: ~A" lang-str)
+    (include-treesitter lang-str :search-path *lem-treesitter-bin*)
+    (setf (gethash lang *treesitters*)
+          (treesitter:make-language lang-str))))
+
+(defun include-treesitter (lang &key search-path)
+  (let* ((lang-str (string-downcase (etypecase lang
+                                      (symbol (symbol-name lang))
+                                      (string lang))))
+         (lisp-name (intern (format nil "~:@(TREE-SITTER-~a~)" lang-str) :treesitter)))
+
+    (cffi:load-foreign-library
+     (format nil "libtree-sitter-~a.so" lang-str)
+     :search-path (or search-path *lem-treesitter-bin* ts:*language-path*))
+
+    ;; TODO Any other way to do this?
+    (eval `(cffi:defcfun (,(format nil "tree_sitter_~a" lang-str) ,lisp-name) :pointer))
+
+    (setf (gethash lang ts:*languages*) lisp-name))
+  lang)
+
+(defun ensure-parser (lang)
+  (unless (gethash lang *parsers*)
+    (setf (gethash lang *parsers*)
+          (treesitter:make-parser :language (gethash lang *treesitters*))))
+  (gethash lang *parsers*))
