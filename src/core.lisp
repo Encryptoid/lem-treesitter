@@ -60,8 +60,21 @@
     (setf (gethash lang ts:*languages*) lisp-name))
   lang)
 
+;(defun ensure-parser (lang)
+;  (unless (gethash lang *parsers*)
+;    (setf (gethash lang *parsers*)
+;          (treesitter:make-parser :language (gethash lang *treesitters*))))
+;  (gethash lang *parsers*))
+
 (defun ensure-parser (lang)
-  (unless (gethash lang *parsers*)
-    (setf (gethash lang *parsers*)
-          (treesitter:make-parser :language (gethash lang *treesitters*))))
-  (gethash lang *parsers*))
+  (lem-treesitter/core::logm (format nil "Ensuring parser for lang: ~A" lang))
+  (let ((parser (gethash lang *parsers*)))
+    (unless parser
+      (lem-treesitter/core::logm (format nil "Creating new parser for ~A" lang))
+      (let ((ts-lang (gethash lang *treesitters*)))
+        (unless ts-lang
+          (error "No treesitter language found for ~A" lang))
+        (setf parser (treesitter:make-parser :language ts-lang))
+        (setf (gethash lang *parsers*) parser)))
+    (lem-treesitter/core::logm (format nil "Returning parser: ~A" parser))
+    parser))

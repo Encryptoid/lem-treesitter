@@ -26,4 +26,5 @@
     (ts:cursor-goto-parent cursor)))
 
 (defun walk-node-with-cursor (root-node buffer)
+  (lem-treesitter/core::logm (format nil "Walking ~a" (ts:node-type root-node)))
   (walk-cursor (ts:make-cursor root-node) buffer))

@@ -56,6 +56,33 @@
         (format s "~%Children count: ~a" (ts:node-child-count node))
         (format s "~%---"))))
 
+(defun print-tree (node &optional (depth 0) source (stream *standard-output*))
+  "Print a tree-sitter node and all its children in a hierarchical format.
+   depth: Current indentation level
+   source: Optional source text to show node content
+   stream: Where to print the output (defaults to *standard-output*)"
+  (when node
+    (let ((indent (make-string (* depth 2) :initial-element #\Space)))
+      ;; Print current node info
+      (format stream "~&~A~A"
+              indent
+              (ts:node-type node))
+
+      ;; Recursively print all children
+      (let ((child-count (ts:node-child-count node)))
+        (when (> child-count 0)
+          (format stream "~%")
+          (loop for i from 0 below child-count
+                for child = (ts:node-child node i)
+                when child
+                do (print-tree child (1+ depth) source stream)))))))
+
+(defun print-tree-to-string (node &optional source)
+  "Return a string representation of the node tree."
+  (with-output-to-string (s)
+    (print-tree node 0 source s)))
+
+
 ;; And update logm to handle nil safely
 (defun logm (string)
   (with-open-file (stream "~/temp/ts.log"
