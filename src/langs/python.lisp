@@ -1,20 +1,16 @@
 ;; TODO How to call this :lem-treesitter/langs/python
-(defpackage :lem-treesitter/python
-  (:use :cl)
-  (:local-nicknames (:ts :treesitter)
-                    (:ts-bind :treesitter/bindings))
-  (:export :*commonlisp*))
 (in-package :lem-treesitter/python)
 
-;; For now call this, need to introduce generic
-(lem:define-command ts-init-py () ()
-  (setq lem-treesitter/parser::*get-attr* #'get-py-attribute))
+(defmethod lem-treesitter::init-mode ((mode (eql 'lem-python-mode:python-mode)))
+  (setq lem-treesitter/parser::*get-attr* #'get-py-attribute)
+  
+  (lem:message "Init Python TS Mode"))
 
 (defun get-py-attribute (node)
   "Get syntax highlighting attribute for a node, considering both base rules and queries"
   (or nil
-   (apply-query-highlights node)
-      ;(get-base-py-attribute node)
+   ;(apply-query-highlights node)
+      (get-base-py-attribute node)
       ))
 
 (defun get-base-py-attribute (node)
@@ -30,7 +26,6 @@
     ("as" 'lem:syntax-keyword-attribute)
     ("not" 'lem:syntax-variable-attribute)
 
-
     ("identifier" (alexandria:switch ((ts:node-type (ts:node-parent node)) :test #'equal)
                     ("function_definition" 'lem:syntax-function-name-attribute)
                     ("class_definition" 'lem:syntax-type-attribute)
@@ -41,7 +36,7 @@
     ("(" 'lem:syntax-variable-attribute)
     (")" 'lem:syntax-variable-attribute)
     (":" 'lem:syntax-variable-attribute)
-    ("decorator > identifier" lem:syntax-keyword-attribute)
+    ;; ("decorator > identifier" lem:syntax-keyword-attribute)
 
     ("integer" 'lem:syntax-constant-attribute)
     ("float" 'lem:syntax-constant-attribute)
@@ -64,13 +59,12 @@
 
     ;; (t (if (some #'alpha-char-p (ts:node-type node)) 'syntax-keyword-attribute 'lem:syntax-constant-attribute))
     )
-
   )
 
 
 (defvar *python-queries* nil)
-(format nil "~a" *python-queries*)
-(format nil "~a" *cached-python-query*)
+;(format nil "~a" *python-queries*)
+;(format nil "~a" *cached-python-query*)
 
 ;(load-python-queries)
 
@@ -91,24 +85,24 @@
               (ts::make-query-cursor))))))
 
 
-(defun apply-query-highlights (node)
-  "Apply highlights based on query matches"
-;  (return-from apply-query-highlights)
-  (when *python-queries*
-    ;; (lem-treesitter/core::logm (format nil "Capture match0: " ))
-    (handler-case
-        (let* ((query (ts::make-query (ts:node-language node) x))
-               (cursor (ts::make-query-cursor)))
-          (ts::query-cursor-exec cursor query node)
-          (dolist (match-node (ts::query-cursor-nodes cursor))
-            (let ((highlight (get-query-highlight match-node)))
-              ;; (lem-treesitter/core::logm (format nil "Capture match1: ~A" (ts:node-type match-node)))
-              ;; (lem-treesitter/core::logm (format nil "OOOOO: ~A" (ts:node-type match-node)))
-              (when highlight
-                (return-from apply-query-highlights highlight)))))
-      (error (e)
-        (format *error-output* "Query error: ~A~%" e)
-        nil))))
+;(defun apply-query-highlights (node)
+;  "Apply highlights based on query matches"
+;;  (return-from apply-query-highlights)
+;  (when *python-queries*
+;    ;; (lem-treesitter/core::logm (format nil "Capture match0: " ))
+;    (handler-case
+;        (let* ((query (ts::make-query (ts:node-language node) x))
+;               (cursor (ts::make-query-cursor)))
+;          (ts::query-cursor-exec cursor query node)
+;          (dolist (match-node (ts::query-cursor-nodes cursor))
+;            (let ((highlight (get-query-highlight match-node)))
+;              ;; (lem-treesitter/core::logm (format nil "Capture match1: ~A" (ts:node-type match-node)))
+;              ;; (lem-treesitter/core::logm (format nil "OOOOO: ~A" (ts:node-type match-node)))
+;              (when highlight
+;                (return-from apply-query-highlights highlight)))))
+;      (error (e)
+;        (format *error-output* "Query error: ~A~%" e)
+;        nil))))
 
 (defun get-query-highlight (node)
   "Map query captures to Lem highlighting attributes"
@@ -150,7 +144,7 @@
       ("(" 'lem:syntax-variable-attribute)
       (")" 'lem:syntax-variable-attribute)
       (":" 'lem:syntax-variable-attribute)
-      ("decorator > identifier" lem:syntax-keyword-attribute)
+      ;; ("decorator > identifier" lem:syntax-keyword-attribute)
 
       ("integer" 'lem:syntax-constant-attribute)
       ("float" 'lem:syntax-constant-attribute)
@@ -174,7 +168,7 @@
 
 
 (defvar x "((identifier) @c)")
-(setq x "((identifier) @iden)")
+;(setq x "((identifier) @iden)")
 
 (defun apply-query-highlights (node)
   "Apply highlights based on query matches"

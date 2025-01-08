@@ -16,15 +16,37 @@
 (defparameter *supported-langs*
   '((lem-python-mode:python-mode . "python")))
 
+;; (defgeneric init-mode (mode-str)
+;;   (:method (mode-str)
+;;     (lem:message "No treesitter for mode: ~A" mode-str)))
+
+;; Job of init-mode:
+;;  - Setup base parsing function?
+;;  - Setup list of additional queries
+;;    - Load from .scm
+;;    - Accept user/ext scm
+;;  - TODO: Should subscribing to changes be in or out of here?
+(defgeneric init-mode (mode)
+  (:method (mode)
+    (lem:message "No treesitter for mode: ~A" mode)))
+
 (defun init-treesitter (buffer)
-  (let ((lang (cdr (assoc (lem-core::detect-file-mode buffer) *supported-langs*))))
+  (let* ((mode (lem:buffer-major-mode buffer)) ;; Returns a symbol
+        (lang (cdr (assoc mode *supported-langs*))))
   (unless lang
     (return-from init-treesitter))
     (lem-treesitter/buffer:store-buffer-info buffer lang)
-  (lem-treesitter/ext/highlight:init-highlighting buffer)))
+    ;; (init-mode lang)
+    (lem:message "mode: ~a" (describe mode t))
+    (init-mode mode)
+    (lem-treesitter/ext/highlight:init-highlighting buffer)))
 
 (defun disable ()
   (lem:message "Treesitter Disabled"))
 
 (lem:define-command ts-hl-buffer () ()
   (init-treesitter (lem:current-buffer)))
+
+;; These modes look correct
+(lem-core::detect-file-mode (lem:current-buffer))
+(lem:buffer-major-mode (lem:current-buffer))

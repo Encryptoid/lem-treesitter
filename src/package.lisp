@@ -30,3 +30,9 @@
 (defpackage :lem-treesitter
   (:use :cl :treesitter)
   (:local-nicknames (:ts :treesitter)))
+
+(defpackage :lem-treesitter/python
+  (:use :cl :lem-treesitter)
+  (:local-nicknames (:ts :treesitter)
+                    (:ts-bind :treesitter/bindings))
+  (:export :*commonlisp*))

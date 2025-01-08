@@ -16,9 +16,6 @@
                              (:file "parser")
                              (:file "ext/highlight")
                              (:file "lem-treesitter")
+                             (:file "langs/python")
                              ))
-
-               (:module "langs"
-                :serial t
-                :components ((:file "python")))
                ))
