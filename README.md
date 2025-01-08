@@ -1,11 +1,23 @@
 # lem-treesitter
-NOTES: Very rough, just getting it working personally. The notes are not organised either.
+NOTES: Very rough, just getting it working personally for now.
 
+# TODO
+ - [x] - Basic integration
+ - [x] - Integrate with mode to read current buffer
+ - [x] - Only rehighlight semantically changed regions
+ - [x] - Basic queries
+ - [ ] - Queries properly integrated reading .scm file
+ - [ ] - Allow extensions specific queries on top
+ - [ ] - Tests
+
+
+# ### DRAFT README ###
 
 The goal is to not just create a walker for the syntax tree, but to parse each visited buffer to a TS Tree, and then expose querying to other packages. One of the packages will be syntax highlighting.
 
 The existing modes(python-mode, etc.) should still be activate to use their other functionality. `treesitter-mode` will try map the major mode to one of it's parsers.
 If the mapping succeed, it will call the init for `treesitter/langs/python`. It is in here that if we have syntax highlighting for a mode, we will turn off the existing and switch to treesitters highlighting extension.
+
 
 # Use Cases
 
